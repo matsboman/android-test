@@ -2,4 +2,15 @@
     <string name="app_name">Hello World</string>
     <string name="message_hint">Enter a message</string>
     <string name="button_label">Send</string>
+    <string name="country_prompt">Choose a country</string>
+    <string-array name="articles">
+        <item>FLOAT 10 MM</item>
+        <item>FLOAT 12 MM</item>
+        <item>FLOAT 3 MM</item>
+    </string-array>
+    <string-array name="article_prices">
+        <item>1363</item>
+        <item>2182</item>
+        <item>270</item>
+    </string-array>
 </resources>
