@@ -4,14 +4,16 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.InputFilter;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -20,8 +22,13 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private Spinner spinner;
-    private Button btnSubmit;
-    Map<String, Integer> articlesMap = new HashMap<>();
+    private EditText materialDiscount;
+    private EditText width;
+    private EditText height;
+    private EditText additionalMen;
+    private EditText additionalHours;
+    Intent resultIntent;
+    Map<String, Double> articlesMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +38,21 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.mytoolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("My Application");
+        resultIntent = new Intent(this, ResultActivity.class);
 
         addListenerOnButton();
         addListenerOnSpinnerItemSelection();
+        initTextFields();
         initArticlesMap();
+    }
+
+    private void initTextFields() {
+        materialDiscount = findViewById(R.id.material_discount);
+        materialDiscount.setFilters(new InputFilter[]{ new MinMaxFilter("1", "100")});
+        width = findViewById(R.id.width);
+        height = findViewById(R.id.height);
+        additionalMen = findViewById(R.id.additional_men);
+        additionalHours = findViewById(R.id.additional_hours);
     }
 
     public void addListenerOnSpinnerItemSelection() {
@@ -42,41 +60,83 @@ public class MainActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new CustomOnItemSelectedListener());
     }
 
-    // get the selected dropdown list value
     public void addListenerOnButton() {
-        spinner = findViewById(R.id.spinner);
-        btnSubmit = (Button) findViewById(R.id.btnSubmit);
+        Button btnSubmit = (Button) findViewById(R.id.btnSubmit);
         btnSubmit.setOnClickListener(new OnClickListener() {
-
             @Override
             public void onClick(View v) {
-
-                Toast.makeText(MainActivityß.this,
-                        "OnClickListener : " +ß
-                                "\nSpinner: " + String.valueOf(spinner.getSelectedItem()),
-                        Toast.LENGTH_SHORT).show();
+                if (isTextFieldsValid()) {
+                    processResults();
+                    startActivity(resultIntent);
+                }
             }
-
         });
+    }
+
+    private void processResults() {
+        Integer widthValue = Integer.parseInt(width.getText().toString());
+        Integer heightValue = Integer.parseInt(height.getText().toString());
+        Double sqm = widthValue * heightValue / 1000000.0;
+        Double discount = materialDiscount.getText().toString().isEmpty() ? 0 : Double.parseDouble(materialDiscount.getText().toString());
+        Double pricePerSqm = articlesMap.get(spinner.getSelectedItem().toString()) * (1.0 - discount / 100.0);
+        Double totalMaterial = sqm * pricePerSqm;
+        Double combinedMeters = (widthValue + heightValue) / 1000.0;
+        resultIntent.putExtra("sqm", sqm.toString());
+        resultIntent.putExtra("pricePerSqm", pricePerSqm.toString());
+        resultIntent.putExtra("totalMaterial", totalMaterial.toString());
+        resultIntent.putExtra("combinedMeters", combinedMeters.toString());
+    }
+
+    private boolean isTextFieldsValid() {
+        width.setError(null);
+        height.setError(null);
+        additionalMen.setError(null);
+        additionalHours.setError(null);
+        boolean isValid = true;
+        if (width.getText().toString().isEmpty()) {
+            width.setError("Width is required!");
+            isValid = false;
+        }
+        if (height.getText().toString().isEmpty()) {
+            height.setError("Height is required!");
+            isValid = false;
+        }
+        if (!additionalMen.getText().toString().isEmpty() &&
+                additionalHours.getText().toString().isEmpty()) {
+            additionalHours.setError("Additional men is required!");
+            isValid = false;
+        }
+        if (!additionalHours.getText().toString().isEmpty() &&
+                additionalMen.getText().toString().isEmpty()) {
+            additionalMen.setError("Additional hours is required!");
+            isValid = false;
+        }
+        return isValid;
     }
 
     private void initArticlesMap() {
         String[] keys = this.getResources().getStringArray(R.array.articles);
         String[] values = this.getResources().getStringArray(R.array.article_prices);
         for (int i = 0; i < keys.length; i++) {
-            Log.d("DEBUG", keys[i]);
-            Log.d("DEBUG", values[i]);
-            articlesMap.put(keys[i], Integer.valueOf(values[i]));
+            articlesMap.put(keys[i], Double.valueOf(values[i]));
         }
     }
 
-//    public void sendMessage(View view) {
-//        EditText editText = findViewById(R.id.txt_message);
-//        String message = editText.getText().toString();
-//        Intent intent = new Intent(this, MessageActivity.class);
-//        intent.putExtra("message", message);
-//        startActivity(intent);
-//    }
+    private void debugToaster() {
+        Toast.makeText(MainActivity.this,
+                "Spinner: " + spinner.getSelectedItem() +
+                        "\nPrice: " + articlesMap.get(spinner.getSelectedItem()) +
+                        "\nMaterial discount: " + materialDiscount.getText().toString() +
+                        "\nWidth: " + width.getText().toString() +
+                        "\nHeight: " + height.getText().toString() +
+                        "\nAdditional men: " + additionalMen.getText().toString() +
+                        "\nAdditional hours: " + additionalHours.getText().toString(),
+                Toast.LENGTH_LONG).show();
+    }
+
+    private void displayInfo(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -98,9 +158,4 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-    public void displayInfo(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
 }
