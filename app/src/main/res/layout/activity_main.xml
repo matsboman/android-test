@@ -86,7 +86,7 @@
         android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/height" />
+        app:layout_constraintTop_toBottomOf="@+id/hourly_rate" />
 
     <EditText
         android:id="@+id/additional_hours"
@@ -97,7 +97,20 @@
         android:hint="@string/additional_hours_hint"
         android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.474"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/additional_men" />
+
+    <EditText
+        android:id="@+id/hourly_rate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="@string/man_hour_hint"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/height" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

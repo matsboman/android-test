@@ -11,14 +11,13 @@ public class ResultActivity extends AppCompatActivity {
     TextView pricePerSqmText;
     TextView totalMaterialText;
     TextView combinedMetersText;
-//    TextView normTimeText;
-//    TextView establishmentText;
-//    TextView addOnText;
-//    TextView totalTimeText;
-//    TextView hourlyPriceText;
-//    TextView totalNormTimeText;
-//    TextView addOnExtraPersonnelText;
-//    TextView totalLaborCostText;
+    TextView additionText;
+    TextView establishmentText;
+    TextView normTimeText;
+    TextView totalMinPriceText;
+    TextView totalLaborCostText;
+    TextView additionalStaffingText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,5 +36,19 @@ public class ResultActivity extends AppCompatActivity {
         totalMaterialText.setText(intent.getStringExtra("totalMaterial"));
         combinedMetersText = findViewById(R.id.combined_meters_value);
         combinedMetersText.setText(intent.getStringExtra("combinedMeters"));
+        additionText = findViewById(R.id.addition_value);
+        additionText.setText(intent.getStringExtra("addition"));
+        establishmentText = findViewById(R.id.establishment_value);
+        establishmentText.setText(intent.getStringExtra("establishment"));
+        normTimeText = findViewById(R.id.norm_time_value);
+        normTimeText.setText(intent.getStringExtra("normTime"));
+        totalMinPriceText = findViewById(R.id.total_min_price_value);
+        totalMinPriceText.setText(intent.getStringExtra("totalMinPrice"));
+        totalLaborCostText = findViewById(R.id.total_labor_cost_value);
+        totalLaborCostText.setText(intent.getStringExtra("totalMinPrice"));
+        additionalStaffingText = findViewById(R.id.additional_staff_value);
+        additionalStaffingText.setText(intent.getStringExtra("additionalStaffing"));
+//        resultIntent.putExtra("numberOfMen", calc.getNumberOfMen());
+//        resultIntent.putExtra("totalTime", calc.getTotalTime());
     }
 }

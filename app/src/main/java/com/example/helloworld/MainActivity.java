@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText materialDiscount;
     private EditText width;
     private EditText height;
+    private EditText hourlyRate;
     private EditText additionalMen;
     private EditText additionalHours;
     Intent resultIntent;
@@ -48,9 +49,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void initTextFields() {
         materialDiscount = findViewById(R.id.material_discount);
-        materialDiscount.setFilters(new InputFilter[]{ new MinMaxFilter("1", "100")});
+        materialDiscount.setFilters(new InputFilter[]{ new MinMaxFilter("0", "100")});
         width = findViewById(R.id.width);
         height = findViewById(R.id.height);
+        hourlyRate = findViewById(R.id.hourly_rate);
         additionalMen = findViewById(R.id.additional_men);
         additionalHours = findViewById(R.id.additional_hours);
     }
@@ -76,15 +78,29 @@ public class MainActivity extends AppCompatActivity {
     private void processResults() {
         Integer widthValue = Integer.parseInt(width.getText().toString());
         Integer heightValue = Integer.parseInt(height.getText().toString());
+        Integer hourlyRateValue = Integer.parseInt(hourlyRate.getText().toString());
+        int additionalMenValue = Integer.parseInt(additionalMen.getText().toString().equals("") ? "0" : additionalMen.getText().toString());
+        int additionalHoursValue = Integer.parseInt(additionalHours.getText().toString().equals("") ? "0" : additionalHours.getText().toString());
         Double sqm = widthValue * heightValue / 1000000.0;
         Double discount = materialDiscount.getText().toString().isEmpty() ? 0 : Double.parseDouble(materialDiscount.getText().toString());
-        Double pricePerSqm = articlesMap.get(spinner.getSelectedItem().toString()) * (1.0 - discount / 100.0);
-        Double totalMaterial = sqm * pricePerSqm;
-        Double combinedMeters = (widthValue + heightValue) / 1000.0;
+        Integer pricePerSqm = (int) Math.round(articlesMap.get(spinner.getSelectedItem().toString()) * (1.0 - discount / 100.0));
+        Integer totalMaterial = (int) Math.round(sqm * pricePerSqm);
+        Integer combinedMeters = (widthValue + heightValue) / 1000;
+
+        CalculateInstallation calc = new CalculateInstallation(combinedMeters, hourlyRateValue, additionalMenValue, additionalHoursValue);
+
         resultIntent.putExtra("sqm", sqm.toString());
         resultIntent.putExtra("pricePerSqm", pricePerSqm.toString());
         resultIntent.putExtra("totalMaterial", totalMaterial.toString());
         resultIntent.putExtra("combinedMeters", combinedMeters.toString());
+        resultIntent.putExtra("addition", calc.getAddition().toString());
+        resultIntent.putExtra("establishment", calc.getEstablishment().toString());
+        resultIntent.putExtra("numberOfMen", calc.getNumberOfMen().toString());
+        resultIntent.putExtra("normTime", calc.getNormTime().toString());
+        resultIntent.putExtra("additionalStaffing", calc.getAdditionalStaffing().toString());
+        resultIntent.putExtra("totalLaborCost", calc.getTotalLaborCost().toString());
+        resultIntent.putExtra("totalMinPrice", calc.getTotalMinPrice().toString());
+        resultIntent.putExtra("totalTime", calc.getTotalTime().toString());
     }
 
     private boolean isTextFieldsValid() {
@@ -99,6 +115,10 @@ public class MainActivity extends AppCompatActivity {
         }
         if (height.getText().toString().isEmpty()) {
             height.setError("Height is required!");
+            isValid = false;
+        }
+        if (hourlyRate.getText().toString().isEmpty()) {
+            hourlyRate.setError("Hourly rate is required!");
             isValid = false;
         }
         if (!additionalMen.getText().toString().isEmpty() &&
