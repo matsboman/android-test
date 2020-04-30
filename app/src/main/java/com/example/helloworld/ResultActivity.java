@@ -14,10 +14,12 @@ public class ResultActivity extends AppCompatActivity {
     TextView additionText;
     TextView establishmentText;
     TextView normTimeText;
-    TextView totalMinPriceText;
+    TextView totalPriceText;
+    TextView minimumPriceText;
+    TextView totalCostNormTime;
     TextView totalLaborCostText;
     TextView additionalStaffingText;
-
+    TextView hourlyRateText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +44,17 @@ public class ResultActivity extends AppCompatActivity {
         establishmentText.setText(intent.getStringExtra("establishment"));
         normTimeText = findViewById(R.id.norm_time_value);
         normTimeText.setText(intent.getStringExtra("normTime"));
-        totalMinPriceText = findViewById(R.id.total_min_price_value);
-        totalMinPriceText.setText(intent.getStringExtra("totalMinPrice"));
+        hourlyRateText = findViewById(R.id.hourly_price_value);
+        hourlyRateText.setText(intent.getStringExtra("hourlyRate"));
+        totalPriceText = findViewById(R.id.total_price_value);
+        totalPriceText.setText(intent.getStringExtra("totalPrice"));
+        minimumPriceText = findViewById(R.id.minimum_price_value);
+        minimumPriceText.setText(intent.getStringExtra("minimumPrice"));
         totalLaborCostText = findViewById(R.id.total_labor_cost_value);
-        totalLaborCostText.setText(intent.getStringExtra("totalMinPrice"));
+        totalLaborCostText.setText(intent.getStringExtra("totalLaborCost"));
+        totalCostNormTime = findViewById(R.id.total_cost_norm_time_value);
+        totalCostNormTime.setText(intent.getStringExtra("totalCostNormTime"));
         additionalStaffingText = findViewById(R.id.additional_staff_value);
         additionalStaffingText.setText(intent.getStringExtra("additionalStaffing"));
-//        resultIntent.putExtra("numberOfMen", calc.getNumberOfMen());
-//        resultIntent.putExtra("totalTime", calc.getTotalTime());
     }
 }

@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText additionalMen;
     private EditText additionalHours;
     Intent resultIntent;
-    Map<String, Double> articlesMap = new HashMap<>();
+    Map<String, Integer> articlesMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,30 +76,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void processResults() {
-        Integer widthValue = Integer.parseInt(width.getText().toString());
-        Integer heightValue = Integer.parseInt(height.getText().toString());
-        Integer hourlyRateValue = Integer.parseInt(hourlyRate.getText().toString());
+        int widthValue = Integer.parseInt(width.getText().toString());
+        int heightValue = Integer.parseInt(height.getText().toString());
+        int hourlyRateValue = Integer.parseInt(hourlyRate.getText().toString());
         int additionalMenValue = Integer.parseInt(additionalMen.getText().toString().equals("") ? "0" : additionalMen.getText().toString());
         int additionalHoursValue = Integer.parseInt(additionalHours.getText().toString().equals("") ? "0" : additionalHours.getText().toString());
-        Double sqm = widthValue * heightValue / 1000000.0;
-        Double discount = materialDiscount.getText().toString().isEmpty() ? 0 : Double.parseDouble(materialDiscount.getText().toString());
-        Integer pricePerSqm = (int) Math.round(articlesMap.get(spinner.getSelectedItem().toString()) * (1.0 - discount / 100.0));
-        Integer totalMaterial = (int) Math.round(sqm * pricePerSqm);
-        Integer combinedMeters = (widthValue + heightValue) / 1000;
+        int discount = materialDiscount.getText().toString().isEmpty() ? 0 : Integer.parseInt(materialDiscount.getText().toString());
+        int price = articlesMap.get(spinner.getSelectedItem().toString());
 
-        CalculateInstallation calc = new CalculateInstallation(combinedMeters, hourlyRateValue, additionalMenValue, additionalHoursValue);
+        CalculateInstallation calc = new
+                CalculateInstallation(price, discount, widthValue, heightValue, hourlyRateValue, additionalMenValue, additionalHoursValue);
 
-        resultIntent.putExtra("sqm", sqm.toString());
-        resultIntent.putExtra("pricePerSqm", pricePerSqm.toString());
-        resultIntent.putExtra("totalMaterial", totalMaterial.toString());
-        resultIntent.putExtra("combinedMeters", combinedMeters.toString());
+        resultIntent.putExtra("sqm", calc.getSqm().toString());
+        resultIntent.putExtra("pricePerSqm", calc.getPricePerSqm().toString());
+        resultIntent.putExtra("hourlyRate", calc.getHourlyRate().toString());
+        resultIntent.putExtra("totalMaterial", calc.getTotalMaterial().toString());
+        resultIntent.putExtra("combinedMeters", calc.getCombinedMeters().toString());
         resultIntent.putExtra("addition", calc.getAddition().toString());
         resultIntent.putExtra("establishment", calc.getEstablishment().toString());
         resultIntent.putExtra("numberOfMen", calc.getNumberOfMen().toString());
         resultIntent.putExtra("normTime", calc.getNormTime().toString());
         resultIntent.putExtra("additionalStaffing", calc.getAdditionalStaffing().toString());
         resultIntent.putExtra("totalLaborCost", calc.getTotalLaborCost().toString());
-        resultIntent.putExtra("totalMinPrice", calc.getTotalMinPrice().toString());
+        resultIntent.putExtra("totalPrice", calc.getTotalPrice().toString());
+        resultIntent.putExtra("minimumPrice", calc.getMinimumPrice().toString());
+        resultIntent.putExtra("totalCostNormTime", calc.getTotalCostNormTime().toString());
+        resultIntent.putExtra("totalLaborCost", calc.getTotalLaborCost().toString());
         resultIntent.putExtra("totalTime", calc.getTotalTime().toString());
     }
 
@@ -138,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         String[] keys = this.getResources().getStringArray(R.array.articles);
         String[] values = this.getResources().getStringArray(R.array.article_prices);
         for (int i = 0; i < keys.length; i++) {
-            articlesMap.put(keys[i], Double.valueOf(values[i]));
+            articlesMap.put(keys[i], Integer.valueOf(values[i]));
         }
     }
 
