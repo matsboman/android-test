@@ -5,21 +5,25 @@ import android.util.Log;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
-public class CalculateInstallation {
+class CalculateInstallation {
     private int combinedMeters;
     private double sqm;
-    private int pricePerSqm;
+    private double pricePerSqm;
+    private int materialPrice;
+    private int materialMinPrice;
     private double normTime;
     private double addition;
     private double establishment;
     private int numberOfMen;
     private double totalTime;
+    private int totalPrice;
     private int hourlyRate;
     private int additionalMen;
     private int additionalHours;
     private int totalMaterial;
     private int minimumPrice;
     private int totalCostNormTime;
+    private int totalLaborCost;
     private static final double COMBINED_METER_LIMIT_1 = 3.2;
     private static final double COMBINED_METER_LIMIT_2 = 5.5;
     private static final double COMBINED_METER_LIMIT_3 = 8.6;
@@ -45,11 +49,14 @@ public class CalculateInstallation {
     private static final double MINIMUM_PRICE_LIMIT = 0.7;
     private static final int NUM_MEN_CONST = 1;
 
-    CalculateInstallation(int price, int discount, int width, int height, int hourlyRate, int additionalMen, int additionalHours) {
+    CalculateInstallation(int price, int discount, int width, int height, int hourlyRate, double minSqm, int additionalMen, int additionalHours) {
 
-        this.pricePerSqm = (int) Math.round(price * (1.0 - discount / 100.0));
+        double discountFactor = discount / 100.0;
         this.sqm = width * height / 1000000.0;
-        this.totalMaterial = (int) Math.round(sqm * pricePerSqm);
+        this.pricePerSqm = price * (1.0 - discountFactor);
+        this.materialPrice = (int) Math.round(pricePerSqm * sqm);
+        this.materialMinPrice = (int) Math.round(Math.max(minSqm, this.sqm) * this.pricePerSqm);
+        this.totalMaterial = Math.max(this.materialMinPrice, this.materialPrice);
         this.combinedMeters = (width + height) / 1000;
         this.hourlyRate = hourlyRate;
         this.additionalMen = additionalMen;
@@ -73,74 +80,81 @@ public class CalculateInstallation {
                 (ESTABLISHMENT_NUM_MEN_LIMIT_2 < this.combinedMeters ? NUM_MEN_CONST : 0) +
                 (ESTABLISHMENT_NUM_MEN_LIMIT_3 < this.combinedMeters ? NUM_MEN_CONST : 0);
         this.totalTime = this.normTime + this.establishment + this.addition;
-//        int totalCost = (int) Math.round(this.totalTime * this.hourlyRate);
+        this.totalPrice = (int) Math.round(this.totalTime * this.hourlyRate);
         this.minimumPrice = (int) Math.round(this.normTime < MINIMUM_PRICE_LIMIT ?
                 ((MINIMUM_PRICE_LIMIT + this.establishment) * this.hourlyRate) : (this.totalTime * this.hourlyRate));
-        this.totalCostNormTime = Math.max(this.totalCost, this.minimumPrice);
+        this.totalCostNormTime = Math.max(this.totalPrice, this.minimumPrice);
+        this.totalLaborCost = Math.round(this.combinedMeters < COMBINED_METER_LIMIT_3 ?
+                (this.totalCostNormTime + this.hourlyRate * this.additionalMen * this.additionalHours) : 0);
     }
 
-    public Integer getPricePerSqm() {
-        return this.pricePerSqm;
+    Double getPricePerSqm() {
+        return roundDouble(this.pricePerSqm);
     }
 
-    public Double getSqm() {
+    Double getSqm() {
         return this.sqm;
     }
 
-    public Integer getHourlyRate() {
+    Integer getHourlyRate() {
         return this.hourlyRate;
     }
 
-    public Integer getCombinedMeters() {
+    Integer getCombinedMeters() {
         return this.combinedMeters;
     }
 
-    public Double getNormTime() {
+    Double getNormTime() {
         return roundDouble(this.normTime);
     }
 
-    public Double getEstablishment() {
+    Double getEstablishment() {
         return roundDouble(this.establishment);
     }
 
-    public Double getAddition() {
+    Double getAddition() {
         return roundDouble(this.addition);
     }
 
-    public Integer getNumberOfMen() {
+    Integer getNumberOfMen() {
         return this.numberOfMen;
     }
 
-    public Double getTotalTime() {
+    Double getTotalTime() {
         return roundDouble(this.totalTime);
     }
 
-    public Integer getTotalPrice() {
-        return (int) Math.ceil(this.hourlyRate * this.totalTime);
+    Integer getTotalPrice() {
+        return this.totalPrice;
     }
 
-    public Integer getMinimumPrice() {
+    Integer getMinimumPrice() {
         return this.minimumPrice;
     }
 
-    public Integer getTotalLaborCost() {
-        return Math.round(this.combinedMeters < COMBINED_METER_LIMIT_3 ?
-                (this.getTotalCostNormTime() + this.getAdditionalStaffing()) : 0);
+    Integer getTotalLaborCost() {
+        return this.totalLaborCost;
     }
 
-    public Integer getAdditionalStaffing() {
+    Integer getAdditionalStaffing() {
         return this.hourlyRate * this.additionalMen * this.additionalHours;
     }
 
-    public Integer getTotalMaterial() {
-        return this.totalMaterial;
-    }
-
-    public Integer getTotalCostNormTime() {
+    Integer getTotalCostNormTime() {
         return this.totalCostNormTime;
     }
 
+    Integer getMaterialPrice() {
+        return this.materialPrice;
+    }
+    Integer getMaterialMinPrice() {
+        return this.materialMinPrice;
+    }
+    Integer getTotalMaterial() {
+        return this.totalMaterial;
+    }
+
     private double roundDouble(double value) {
-        return Math.round(value * 10) / 10.0;
+        return Math.round(value * 100) / 100.0;
     }
 }

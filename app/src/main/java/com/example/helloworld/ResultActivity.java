@@ -9,6 +9,8 @@ import android.widget.TextView;
 public class ResultActivity extends AppCompatActivity {
     TextView sqmText;
     TextView pricePerSqmText;
+    TextView materialPriceText;
+    TextView materialMinPriceText;
     TextView totalMaterialText;
     TextView combinedMetersText;
     TextView additionText;
@@ -20,6 +22,13 @@ public class ResultActivity extends AppCompatActivity {
     TextView totalLaborCostText;
     TextView additionalStaffingText;
     TextView hourlyRateText;
+    TextView sumMaterialCost;
+    TextView sumRebateMaterialCost;
+    TextView sumMaterialTotalCost;
+    TextView sumNormTime;
+    TextView sumWorkAdditional;
+    TextView sumWorkTotalCost;
+    TextView sumGrandTotal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,10 +39,16 @@ public class ResultActivity extends AppCompatActivity {
 
     private void initTextViews() {
         Intent intent = getIntent();
+
+        // Get values
         sqmText = findViewById(R.id.sqm_value);
         sqmText.setText(intent.getStringExtra("sqm"));
         pricePerSqmText = findViewById(R.id.price_per_sqm_value);
         pricePerSqmText.setText(intent.getStringExtra("pricePerSqm"));
+        materialPriceText = findViewById(R.id.material_price_value);
+        materialPriceText.setText(intent.getStringExtra("materialPrice"));
+        materialMinPriceText = findViewById(R.id.min_material_price_value);
+        materialMinPriceText.setText(intent.getStringExtra("materialMinPrice"));
         totalMaterialText = findViewById(R.id.total_material_value);
         totalMaterialText.setText(intent.getStringExtra("totalMaterial"));
         combinedMetersText = findViewById(R.id.combined_meters_value);
@@ -56,5 +71,21 @@ public class ResultActivity extends AppCompatActivity {
         totalCostNormTime.setText(intent.getStringExtra("totalCostNormTime"));
         additionalStaffingText = findViewById(R.id.additional_staff_value);
         additionalStaffingText.setText(intent.getStringExtra("additionalStaffing"));
+
+        // Sum material and work costs
+        sumMaterialCost = findViewById(R.id.sum_material_value);
+        sumMaterialCost.setText(intent.getStringExtra("sumMaterialCost"));
+        sumRebateMaterialCost = findViewById(R.id.sum_rebate_material_value);
+        sumRebateMaterialCost.setText(intent.getStringExtra("sumRebateMaterialCost"));
+        sumMaterialTotalCost = findViewById(R.id.sum_material_total_value);
+        sumMaterialTotalCost.setText(intent.getStringExtra("sumMaterialTotalCost"));
+        sumNormTime = findViewById(R.id.sum_norm_time_value);
+        sumNormTime.setText(intent.getStringExtra("sumNormTime"));
+        sumWorkAdditional = findViewById(R.id.sum_addition_value);
+        sumWorkAdditional.setText(intent.getStringExtra("sumWorkAdditional"));
+        sumWorkTotalCost = findViewById(R.id.sum_work_total_value);
+        sumWorkTotalCost.setText(intent.getStringExtra("sumWorkTotalCost"));
+        sumGrandTotal = findViewById(R.id.sum_grand_total_value);
+        sumGrandTotal.setText(intent.getStringExtra("sumGrandTotal"));
     }
 }

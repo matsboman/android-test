@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText width;
     private EditText height;
     private EditText hourlyRate;
+    private EditText minSqm;
     private EditText additionalMen;
     private EditText additionalHours;
     Intent resultIntent;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         width = findViewById(R.id.width);
         height = findViewById(R.id.height);
         hourlyRate = findViewById(R.id.hourly_rate);
+        minSqm = findViewById(R.id.min_sqm);
         additionalMen = findViewById(R.id.additional_men);
         additionalHours = findViewById(R.id.additional_hours);
     }
@@ -79,17 +81,20 @@ public class MainActivity extends AppCompatActivity {
         int widthValue = Integer.parseInt(width.getText().toString());
         int heightValue = Integer.parseInt(height.getText().toString());
         int hourlyRateValue = Integer.parseInt(hourlyRate.getText().toString());
+        double minSqmValue = Double.parseDouble(minSqm.getText().toString());
         int additionalMenValue = Integer.parseInt(additionalMen.getText().toString().equals("") ? "0" : additionalMen.getText().toString());
         int additionalHoursValue = Integer.parseInt(additionalHours.getText().toString().equals("") ? "0" : additionalHours.getText().toString());
         int discount = materialDiscount.getText().toString().isEmpty() ? 0 : Integer.parseInt(materialDiscount.getText().toString());
         int price = articlesMap.get(spinner.getSelectedItem().toString());
 
         CalculateInstallation calc = new
-                CalculateInstallation(price, discount, widthValue, heightValue, hourlyRateValue, additionalMenValue, additionalHoursValue);
+                CalculateInstallation(price, discount, widthValue, heightValue, hourlyRateValue, minSqmValue, additionalMenValue, additionalHoursValue);
 
         resultIntent.putExtra("sqm", calc.getSqm().toString());
         resultIntent.putExtra("pricePerSqm", calc.getPricePerSqm().toString());
         resultIntent.putExtra("hourlyRate", calc.getHourlyRate().toString());
+        resultIntent.putExtra("materialPrice", calc.getMaterialPrice().toString());
+        resultIntent.putExtra("materialMinPrice", calc.getMaterialMinPrice().toString());
         resultIntent.putExtra("totalMaterial", calc.getTotalMaterial().toString());
         resultIntent.putExtra("combinedMeters", calc.getCombinedMeters().toString());
         resultIntent.putExtra("addition", calc.getAddition().toString());
@@ -103,6 +108,17 @@ public class MainActivity extends AppCompatActivity {
         resultIntent.putExtra("totalCostNormTime", calc.getTotalCostNormTime().toString());
         resultIntent.putExtra("totalLaborCost", calc.getTotalLaborCost().toString());
         resultIntent.putExtra("totalTime", calc.getTotalTime().toString());
+
+        CalculateSum calcSum = new
+                CalculateSum(price, calc.getSqm(), minSqmValue, discount, calc.getCombinedMeters(), calc.getTotalCostNormTime(), calc.getAdditionalStaffing());
+
+        resultIntent.putExtra("sumMaterialCost", calcSum.getMaterialCost().toString());
+        resultIntent.putExtra("sumRebateMaterialCost", calcSum.getRebateMaterial().toString());
+        resultIntent.putExtra("sumMaterialTotalCost", calcSum.getMaterialTotalCost().toString());
+        resultIntent.putExtra("sumNormTime", calcSum.getNormTime().toString());
+        resultIntent.putExtra("sumWorkAdditional", calcSum.getWorkAdditional().toString());
+        resultIntent.putExtra("sumWorkTotalCost", calcSum.getWorkTotalCost().toString());
+        resultIntent.putExtra("sumGrandTotal", calcSum.getGrandTotal().toString());
     }
 
     private boolean isTextFieldsValid() {
@@ -121,6 +137,10 @@ public class MainActivity extends AppCompatActivity {
         }
         if (hourlyRate.getText().toString().isEmpty()) {
             hourlyRate.setError("Hourly rate is required!");
+            isValid = false;
+        }
+        if (minSqm.getText().toString().isEmpty()) {
+            minSqm.setError("Minimum sqm is required!");
             isValid = false;
         }
         if (!additionalMen.getText().toString().isEmpty() &&
@@ -142,18 +162,6 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < keys.length; i++) {
             articlesMap.put(keys[i], Integer.valueOf(values[i]));
         }
-    }
-
-    private void debugToaster() {
-        Toast.makeText(MainActivity.this,
-                "Spinner: " + spinner.getSelectedItem() +
-                        "\nPrice: " + articlesMap.get(spinner.getSelectedItem()) +
-                        "\nMaterial discount: " + materialDiscount.getText().toString() +
-                        "\nWidth: " + width.getText().toString() +
-                        "\nHeight: " + height.getText().toString() +
-                        "\nAdditional men: " + additionalMen.getText().toString() +
-                        "\nAdditional hours: " + additionalHours.getText().toString(),
-                Toast.LENGTH_LONG).show();
     }
 
     private void displayInfo(String message) {
