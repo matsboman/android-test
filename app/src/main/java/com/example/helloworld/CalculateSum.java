@@ -7,7 +7,11 @@ class CalculateSum {
     private int workAdditional;
     private static final double COMBINED_METER_LIMIT = 8.6;
 
-    CalculateSum(int price, double sqm, double minSqm, int discount, int combinedMeters, int normTimeTotalCost, int additionalStaff) {
+    CalculateSum(int price, double sqm, double minSqm, int discount, double combinedMeters, int normTimeTotalCost, int additionalStaff) {
+        calculate(price, sqm, minSqm, discount, combinedMeters, normTimeTotalCost, additionalStaff);
+    }
+
+    void calculate(int price, double sqm, double minSqm, int discount, double combinedMeters, int normTimeTotalCost, int additionalStaff) {
         this.materialCost = (int) Math.round(Math.max(sqm, minSqm) * price);
         this.rebateMaterial = (int) -Math.round((Math.max(minSqm, sqm) * price * discount / 100.0));
         this.normTime = combinedMeters < COMBINED_METER_LIMIT ? normTimeTotalCost : 0;

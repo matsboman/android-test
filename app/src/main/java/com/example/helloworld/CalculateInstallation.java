@@ -6,7 +6,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 class CalculateInstallation {
-    private int combinedMeters;
+    private double combinedMeters;
     private double sqm;
     private double pricePerSqm;
     private int materialPrice;
@@ -50,14 +50,21 @@ class CalculateInstallation {
     private static final int NUM_MEN_CONST = 1;
 
     CalculateInstallation(int price, int discount, int width, int height, int hourlyRate, double minSqm, int additionalMen, int additionalHours) {
+        calculateMaterial(price, discount, width, height, minSqm);
+        calculateLabor(hourlyRate, additionalMen, additionalHours);
+    }
 
+    void calculateMaterial(int price, int discount, int width, int height, double minSqm) {
         double discountFactor = discount / 100.0;
         this.sqm = width * height / 1000000.0;
         this.pricePerSqm = price * (1.0 - discountFactor);
         this.materialPrice = (int) Math.round(pricePerSqm * sqm);
         this.materialMinPrice = (int) Math.round(Math.max(minSqm, this.sqm) * this.pricePerSqm);
         this.totalMaterial = Math.max(this.materialMinPrice, this.materialPrice);
-        this.combinedMeters = (width + height) / 1000;
+        this.combinedMeters = (width + height) / 1000.0;
+    }
+
+    void calculateLabor(int hourlyRate, int additionalMen, int additionalHours) {
         this.hourlyRate = hourlyRate;
         this.additionalMen = additionalMen;
         this.additionalHours = additionalHours;
@@ -100,7 +107,7 @@ class CalculateInstallation {
         return this.hourlyRate;
     }
 
-    Integer getCombinedMeters() {
+    Double getCombinedMeters() {
         return this.combinedMeters;
     }
 
