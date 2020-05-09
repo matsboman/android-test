@@ -15,6 +15,7 @@ public class ResultActivity extends AppCompatActivity {
     TextView combinedMetersText;
     TextView additionText;
     TextView establishmentText;
+    TextView establishmentCostText;
     TextView normTimeText;
     TextView totalPriceText;
     TextView minimumPriceText;
@@ -55,10 +56,10 @@ public class ResultActivity extends AppCompatActivity {
         combinedMetersText.setText(intent.getStringExtra("combinedMeters"));
         additionText = findViewById(R.id.addition_value);
         additionText.setText(intent.getStringExtra("addition"));
-        establishmentText = findViewById(R.id.establishment_value);
-        establishmentText.setText(intent.getStringExtra("establishment"));
         normTimeText = findViewById(R.id.norm_time_value);
         normTimeText.setText(intent.getStringExtra("normTime"));
+        establishmentText = findViewById(R.id.establishment_value);
+        establishmentText.setText(intent.getStringExtra("establishment"));
         hourlyRateText = findViewById(R.id.hourly_price_value);
         hourlyRateText.setText(intent.getStringExtra("hourlyRate"));
         totalPriceText = findViewById(R.id.total_price_value);
@@ -83,6 +84,8 @@ public class ResultActivity extends AppCompatActivity {
         sumNormTime.setText(intent.getStringExtra("sumNormTime"));
         sumWorkAdditional = findViewById(R.id.sum_addition_value);
         sumWorkAdditional.setText(intent.getStringExtra("sumWorkAdditional"));
+        establishmentCostText = findViewById(R.id.sum_establishment_value);
+        establishmentCostText.setText(intent.getStringExtra("establishmentCost"));
         sumWorkTotalCost = findViewById(R.id.sum_work_total_value);
         sumWorkTotalCost.setText(intent.getStringExtra("sumWorkTotalCost"));
         sumGrandTotal = findViewById(R.id.sum_grand_total_value);

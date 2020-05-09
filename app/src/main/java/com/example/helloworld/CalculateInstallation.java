@@ -13,9 +13,8 @@ class CalculateInstallation {
     private int materialMinPrice;
     private double normTime;
     private double addition;
-    private double establishment;
-    private int numberOfMen;
     private double totalTime;
+    private double establishment;
     private int totalPrice;
     private int hourlyRate;
     private int additionalMen;
@@ -24,6 +23,7 @@ class CalculateInstallation {
     private int minimumPrice;
     private int totalCostNormTime;
     private int totalLaborCost;
+    private int numberOfMen;
     private static final double COMBINED_METER_LIMIT_1 = 3.2;
     private static final double COMBINED_METER_LIMIT_2 = 5.5;
     private static final double COMBINED_METER_LIMIT_3 = 8.6;
@@ -39,6 +39,7 @@ class CalculateInstallation {
     private static final double ADDITION_CONST_1 = 0.5;
     private static final double ADDITION_CONST_2 = 0.3;
     private static final double ADDITION_CONST_3 = -0.8;
+    private static final double MINIMUM_PRICE_LIMIT = 0.7;
     private static final double ESTABLISHMENT_COMBINED_METER_LIMIT_1 = 1.9;
     private static final double ESTABLISHMENT_COMBINED_METER_LIMIT_2 = 9.9;
     private static final double ESTABLISHMENT_CONST_1 = 0.8;
@@ -46,7 +47,6 @@ class CalculateInstallation {
     private static final double ESTABLISHMENT_NUM_MEN_LIMIT_1 = 1.3;
     private static final double ESTABLISHMENT_NUM_MEN_LIMIT_2 = 2.0;
     private static final double ESTABLISHMENT_NUM_MEN_LIMIT_3 = 2.7;
-    private static final double MINIMUM_PRICE_LIMIT = 0.7;
     private static final int NUM_MEN_CONST = 1;
 
     CalculateInstallation(int price, int discount, int width, int height, int hourlyRate, double minSqm, int additionalMen, int additionalHours) {
@@ -78,21 +78,21 @@ class CalculateInstallation {
         this.addition = (ADDITION_COMBINED_METER_LIMIT_1 < this.combinedMeters ? ADDITION_CONST_1 : 0) +
                 (ADDITION_COMBINED_METER_LIMIT_2 < this.combinedMeters ? ADDITION_CONST_2 : 0) +
                 (ADDITION_COMBINED_METER_LIMIT_3 < this.combinedMeters ? ADDITION_CONST_3 : 0);
-        this.establishment = ESTABLISHMENT_CONST_1 +
-                (ESTABLISHMENT_COMBINED_METER_LIMIT_1 < this.combinedMeters ? ESTABLISHMENT_CONST_1 : 0) +
-                (ESTABLISHMENT_COMBINED_METER_LIMIT_2 < this.combinedMeters ? ESTABLISHMENT_CONST_2 : 0);
         this.normTime = Math.pow(this.combinedMeters / denominator, 2d) + constant;
-        this.numberOfMen = NUM_MEN_CONST +
-                (ESTABLISHMENT_NUM_MEN_LIMIT_1 < this.combinedMeters ? NUM_MEN_CONST : 0) +
-                (ESTABLISHMENT_NUM_MEN_LIMIT_2 < this.combinedMeters ? NUM_MEN_CONST : 0) +
-                (ESTABLISHMENT_NUM_MEN_LIMIT_3 < this.combinedMeters ? NUM_MEN_CONST : 0);
-        this.totalTime = this.normTime + this.establishment + this.addition;
+        this.totalTime = this.normTime + this.addition;
         this.totalPrice = (int) Math.round(this.totalTime * this.hourlyRate);
         this.minimumPrice = (int) Math.round(this.normTime < MINIMUM_PRICE_LIMIT ?
-                ((MINIMUM_PRICE_LIMIT + this.establishment) * this.hourlyRate) : (this.totalTime * this.hourlyRate));
+                (MINIMUM_PRICE_LIMIT  * this.hourlyRate) : (this.totalTime * this.hourlyRate));
         this.totalCostNormTime = Math.max(this.totalPrice, this.minimumPrice);
         this.totalLaborCost = Math.round(this.combinedMeters < COMBINED_METER_LIMIT_3 ?
                 (this.totalCostNormTime + this.hourlyRate * this.additionalMen * this.additionalHours) : 0);
+        this.establishment = ESTABLISHMENT_CONST_1 +
+                (ESTABLISHMENT_COMBINED_METER_LIMIT_1 < combinedMeters ? ESTABLISHMENT_CONST_1 : 0) +
+                (ESTABLISHMENT_COMBINED_METER_LIMIT_2 < combinedMeters ? ESTABLISHMENT_CONST_2 : 0);
+        this.numberOfMen = NUM_MEN_CONST +
+                (ESTABLISHMENT_NUM_MEN_LIMIT_1 < combinedMeters? NUM_MEN_CONST : 0) +
+                (ESTABLISHMENT_NUM_MEN_LIMIT_2 < combinedMeters? NUM_MEN_CONST : 0) +
+                (ESTABLISHMENT_NUM_MEN_LIMIT_3 < combinedMeters ? NUM_MEN_CONST : 0);
     }
 
     Double getPricePerSqm() {
@@ -115,21 +115,19 @@ class CalculateInstallation {
         return roundDouble(this.normTime);
     }
 
-    Double getEstablishment() {
-        return roundDouble(this.establishment);
-    }
-
     Double getAddition() {
         return roundDouble(this.addition);
+    }
+
+    Double getTotalTime() {
+        return roundDouble(this.totalTime);
     }
 
     Integer getNumberOfMen() {
         return this.numberOfMen;
     }
 
-    Double getTotalTime() {
-        return roundDouble(this.totalTime);
-    }
+    Double getEstablishment() { return this.establishment; }
 
     Integer getTotalPrice() {
         return this.totalPrice;

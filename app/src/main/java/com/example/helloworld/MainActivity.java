@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText materialDiscount;
     private EditText width;
     private EditText height;
+    private EditText quantity;
     private EditText hourlyRate;
     private EditText minSqm;
     private EditText additionalMen;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         materialDiscount.setFilters(new InputFilter[]{ new MinMaxFilter("0", "100")});
         width = findViewById(R.id.width);
         height = findViewById(R.id.height);
+        quantity = findViewById(R.id.quantity);
         hourlyRate = findViewById(R.id.hourly_rate);
         minSqm = findViewById(R.id.min_sqm);
         additionalMen = findViewById(R.id.additional_men);
@@ -80,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
     private void processResults() {
         int widthValue = Integer.parseInt(width.getText().toString());
         int heightValue = Integer.parseInt(height.getText().toString());
+        int quantityValue = Integer.parseInt(quantity.getText().toString());
         int hourlyRateValue = Integer.parseInt(hourlyRate.getText().toString());
         double minSqmValue = Double.parseDouble(minSqm.getText().toString());
         int additionalMenValue = Integer.parseInt(additionalMen.getText().toString().equals("") ? "0" : additionalMen.getText().toString());
@@ -98,9 +101,9 @@ public class MainActivity extends AppCompatActivity {
         resultIntent.putExtra("totalMaterial", calc.getTotalMaterial().toString());
         resultIntent.putExtra("combinedMeters", calc.getCombinedMeters().toString());
         resultIntent.putExtra("addition", calc.getAddition().toString());
+        resultIntent.putExtra("normTime", calc.getNormTime().toString());
         resultIntent.putExtra("establishment", calc.getEstablishment().toString());
         resultIntent.putExtra("numberOfMen", calc.getNumberOfMen().toString());
-        resultIntent.putExtra("normTime", calc.getNormTime().toString());
         resultIntent.putExtra("additionalStaffing", calc.getAdditionalStaffing().toString());
         resultIntent.putExtra("totalLaborCost", calc.getTotalLaborCost().toString());
         resultIntent.putExtra("totalPrice", calc.getTotalPrice().toString());
@@ -110,13 +113,23 @@ public class MainActivity extends AppCompatActivity {
         resultIntent.putExtra("totalTime", calc.getTotalTime().toString());
 
         CalculateSum calcSum = new
-                CalculateSum(price, calc.getSqm(), minSqmValue, discount, calc.getCombinedMeters(), calc.getTotalCostNormTime(), calc.getAdditionalStaffing());
-
+                CalculateSum(
+                price,
+                hourlyRateValue,
+                quantityValue,
+                calc.getSqm(),
+                minSqmValue,
+                discount,
+                calc.getCombinedMeters(),
+                calc.getTotalCostNormTime(),
+                calc.getEstablishment(),
+                calc.getAdditionalStaffing());
         resultIntent.putExtra("sumMaterialCost", calcSum.getMaterialCost().toString());
         resultIntent.putExtra("sumRebateMaterialCost", calcSum.getRebateMaterial().toString());
         resultIntent.putExtra("sumMaterialTotalCost", calcSum.getMaterialTotalCost().toString());
         resultIntent.putExtra("sumNormTime", calcSum.getNormTime().toString());
         resultIntent.putExtra("sumWorkAdditional", calcSum.getWorkAdditional().toString());
+        resultIntent.putExtra("establishmentCost", calcSum.getEstablishmentCost().toString());
         resultIntent.putExtra("sumWorkTotalCost", calcSum.getWorkTotalCost().toString());
         resultIntent.putExtra("sumGrandTotal", calcSum.getGrandTotal().toString());
     }
@@ -133,6 +146,10 @@ public class MainActivity extends AppCompatActivity {
         }
         if (height.getText().toString().isEmpty()) {
             height.setError("Height is required!");
+            isValid = false;
+        }
+        if (quantity.getText().toString().isEmpty()) {
+            quantity.setError("Quantity is required!");
             isValid = false;
         }
         if (hourlyRate.getText().toString().isEmpty()) {

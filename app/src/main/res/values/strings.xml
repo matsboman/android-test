@@ -5,6 +5,7 @@
     <string name="height_hint">Enter height</string>
     <string name="man_hour_hint">Enter hourly rate</string>
     <string name="min_sqm_hint">Enter minimum sqm</string>
+    <string name="quantity_hint">Enter quantity</string>
     <string name="additional_men_hint">Enter additional men</string>
     <string name="additional_hours_hint">Enter additional hours</string>
     <string name="button_label">Send</string>

@@ -45,11 +45,11 @@ public class CalculateInstallationTest {
         assertEquals(11.39, calc.getNormTime(), 0.001);
         assertEquals(1.6, calc.getEstablishment(), 0.001);
         assertEquals(0, calc.getAddition(), 0.001);
-        assertEquals(12.99, calc.getTotalTime(), 0.001);
+        assertEquals(11.39, calc.getTotalTime(), 0.001);
         assertEquals(500, calc.getHourlyRate().intValue());
-        assertEquals(6494, calc.getTotalPrice().intValue());
-        assertEquals(6494, calc.getTotalCostNormTime().intValue());
+        assertEquals(5694, calc.getTotalPrice().intValue());
+        assertEquals(5694, calc.getTotalCostNormTime().intValue());
         assertEquals(1000, calc.getAdditionalStaffing().intValue());
-        assertEquals(7494, calc.getTotalLaborCost().intValue());
+        assertEquals(6694, calc.getTotalLaborCost().intValue());
     }
 }
